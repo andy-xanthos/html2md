@@ -17,10 +17,18 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     }
 });
 
+
 // Receive the message containing the innerHTML of
 // the most recent element that had a context window
 // opened on it. 
 var html;
 browser.runtime.onMessage.addListener((data, sender) => {
-    return html = data.html;
+    // If the source of the message is a button click.
+    if (data.src == 'btn') {
+        const markdown = TurndownService.turndown(data.html);
+        navigator.clipboard.writeText(markdown)
+            .then(() => { console.log('Markdown copied to clipboard.') });
+    } else if (data.src == 'ctx') {
+        return html = data.html;
+    } // source is context menu.
 });
